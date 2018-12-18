@@ -18,4 +18,8 @@ class DataBaseTest(unittest.TestCase):
 
     def test_read_table(self):
         buses = read_table("buses")
-        pprint(buses)
+        self.assertIsNotNone(buses)
+
+    def test_describe_table(self):
+        desc = describe_table("buses")
+        self.assertIsNotNone(desc)
