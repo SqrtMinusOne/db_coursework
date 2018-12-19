@@ -39,6 +39,9 @@ def execute_procedure(proc_name, args=[]):
         res = [tuple(proc["columns"])]
         [res.append(data) for data in cursor]
     cursor.close()
-    db_local.commit()
+    try:
+        db_local.commit()
+    except:
+        print("Can't commit")
     db_local.disconnect()
     return res, None

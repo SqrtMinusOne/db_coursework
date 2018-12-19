@@ -26,6 +26,7 @@ export class EditableTable extends Component{
 		this.handleCancel = this.handleCancel.bind(this);
 		this.handleAddModal = this.handleAddModal.bind(this);
 		this.getInfo(this.props.tableName);
+		this.handleGetNewInfo = this.handleGetNewInfo.bind(this);
 	}
 
 	componentWillMount() {
@@ -34,6 +35,10 @@ export class EditableTable extends Component{
 
 	componentWillReceiveProps(nextProps, nextContext) {
 		this.getInfo(nextProps.tableName);
+	}
+
+	handleGetNewInfo(){
+		this.getInfo(this.props.tableName);
 	}
 
 	getInfo(tableName){
@@ -160,6 +165,10 @@ export class EditableTable extends Component{
 		}
 		let buttons = [(<button className={"w3-button w3-theme-d5 w3-margin-bottom w3-margin-right"}
 								onClick={this.handleAddModal} key={'a'}>Добавить</button>)];
+		if (this.props.updateButton){
+			buttons.push(<button className={"w3-button w3-theme-d3 w3-margin-bottom w3-margin-right"}
+			onClick={this.handleGetNewInfo}>Обновить</button>)
+		}
 		if (this.state.wasEdited){
 			buttons.push(<button className={"w3-button w3-orange w3-margin-bottom w3-margin-right"}
 			                     onClick={this.handleUpdate} key={'b'}>Сохранить</button>);

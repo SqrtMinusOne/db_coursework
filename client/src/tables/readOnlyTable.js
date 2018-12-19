@@ -47,11 +47,9 @@ export class ReadOnlyTable extends Component{
 		this.request_pending = true;
 		let url = `http://127.0.0.1:5000/table?table_name=${tableName}`;
 		console.log(this.state.params_list);
-		if (this.props.params){
-			for (let i=0; i < this.state.params_list.length; i++)
-				url += `&${i}=${this.state.params_list[i]}`
+		for (let i=0; i < this.state.params_list.length; i++)
+			url += `&${i}=${this.state.params_list[i]}`;
 
-		}
 		$.ajax({
 			url: url,
 			method: 'GET',
@@ -119,7 +117,7 @@ export class ReadOnlyTable extends Component{
 								<input className={"w3-input"} style={{float: "left", width: "30%"}}
 								       name={index} onChange={this.handleChangeParams}/>
 								<button className={"w3-button w3-theme-d5 w3-margin-left"} style={{float: "left"}}
-										onClick={this.handleSaveParams}>Отправить</button>
+								        onClick={this.handleSaveParams}>Отправить</button>
 							</span>))
 					}
 				</div>
@@ -130,7 +128,7 @@ export class ReadOnlyTable extends Component{
 				<Card header={this.props.header} footer="Корытов Павел, 6304">
 					<span>{params_input}{buttons}</span>
 					{(!this.props.params || (this.state.params && this.props.params)) &&
-						<Table data={this.state.data} header={this.state.header} onRowClick={this.handleRowClick}/>
+					<Table data={this.state.data} header={this.state.header} onRowClick={this.handleRowClick}/>
 					}
 				</Card>
 			</div>

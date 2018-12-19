@@ -6,6 +6,8 @@ import {Sidebar} from "./page/sidebar";
 import {EditableTable} from "./tables/editableTable";
 import {ReadOnlyTable} from "./tables/readOnlyTable";
 import {EditSchedule} from "./tables/editSchedule";
+import {Statistics} from "./tables/statistics";
+import {GroupReport} from "./tables/groupReport";
 
 class App extends Component {
 	constructor(props){
@@ -30,7 +32,9 @@ class App extends Component {
 			calculate_salaries: 'Зарплаты',
 			buses_on_route: 'Автобусы на маршруте',
 			drivers_on_route: 'Водители на маршруте',
-			routes_in_point: 'Машруты через точку'
+			routes_in_point: 'Машруты через точку',
+			statistics: 'Общая статистика',
+			group: 'Общий отчёт'
 		};
 		this.scheduleButtons = {
 			schedule: 'Составление расписания'
@@ -75,6 +79,8 @@ class App extends Component {
 				case 'routes_in_point': return (<ReadOnlyTable tableName="get_routes_in_point" header="Маршруты через точку"
 				                                               params={['Название остановки']}/>);
 				case 'schedule': return (<EditSchedule/>);
+				case 'statistics': return (<Statistics/>);
+				case 'group': return (<GroupReport/>);
 				default: return (
 					<b>Ошибка</b>
 				)

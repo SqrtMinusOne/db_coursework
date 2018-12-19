@@ -14,7 +14,7 @@ export class EditModal extends Component{
 			if (opts){
 				data[i].type = 'select';
 				data[i].values = opts;
-				data[i].value = data[i].value || data[i].values[0];
+				data[i].value = data[i].value || data[i].values[0][0];
 				continue;
 			}
 			if (!this.props.data)
@@ -84,7 +84,7 @@ export class EditModal extends Component{
 										(<select className={"w3-select w3-margin-bottom"} defaultValue={field.value}
 											name={index} onChange={this.handleChange}>
 											{field.values.map((value, field_index)=>(
-												<option key={field_index} value={value}>{value}</option>
+												<option key={field_index} value={value[0]}>{value[1]}</option>
 											))}
 										</select>)
 										:
