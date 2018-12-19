@@ -31,6 +31,24 @@ export class Sidebar extends Component{
 							</button>
 						))
 					}
+					<p className={"w3-container"}>Отчёты:</p>
+					{
+						Object.keys(this.props.reportButtons).map((key, index)=>(
+							<button className={button_class} key={index}
+							        onClick={this.handleButton.bind(this, key)}>
+								{this.props.reportButtons[key]}
+							</button>
+						))
+					}
+					<p className={"w3-container"}>Расписание:</p>
+					{
+						Object.keys(this.props.scheduleButtons).map((key, index)=>(
+							<button className={button_class} key={index}
+							        onClick={this.handleButton.bind(this, key)}>
+								{this.props.scheduleButtons[key]}
+							</button>
+						))
+					}
 				</div>
 			</div>
 		)

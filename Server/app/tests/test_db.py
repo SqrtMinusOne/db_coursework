@@ -21,7 +21,7 @@ class DataBaseTest(unittest.TestCase):
         self.assertGreater(i, 0)
 
     def test_json(self):
-        with open('../config/description.json') as file:
+        with open('../config/readwrite.json') as file:
             data = json.load(file)
         self.assertIsNotNone(data)
 

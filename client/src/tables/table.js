@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import '../App.css'
-import $ from "jquery";
 
 export class Table extends Component{
 	constructor(props){
@@ -16,10 +15,15 @@ export class Table extends Component{
 		this.props.onRowContextMenu && this.props.onRowContextMenu(row, index)
 	}
 	getRowClass(index){
-		if (this.props.marked.indexOf(index)>=0){
-			return 'w3-red w3-hover-deep-orange';
+		let color = '';
+		if (this.props.marked && this.props.marked.indexOf(index)>=0){
+			color =  'w3-red';
 		}
-		return index % 2 === 0 ? 'w3-theme-l3 w3-hover-deep-orange' : 'w3-theme w3-hover-deep-orange';
+		else
+		color = index % 2 === 0 ? 'w3-theme-l3' : 'w3-theme';
+		if (this.props.onRowClick || this.props.onRowContextMenu)
+			color += ' w3-hover-deep-orange';
+		return color;
 	}
 	render(){
 		return(
@@ -53,27 +57,4 @@ export class Table extends Component{
 			</table>
 		)
 	}
-}
-
-export function getInfo(table_name){
-	$.ajax({
-		url: `http://127.0.0.1:5000/table?table_name=${table_name}`,
-		method: 'GET',
-		crossDomain: true,
-	}).then(function (response) {
-		console.log(response);
-		if (response.ok){
-			let data = response.data;
-			let header = data[0];
-			data.splice(0, 1);
-			this.setState({
-				isLoading: false,
-				data: data,
-				header: header
-			});
-		}
-		else{
-			alert("Ошибка получения данных")
-		}
-	}.bind(this))
 }

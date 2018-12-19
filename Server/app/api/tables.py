@@ -1,25 +1,20 @@
-from app import db
+from mysql import connector
+
+from app import db, Config
 import json
-import logging
 
-from app.api.types import get_bus_types
+from app.api.types import get_bus_types, get_drivers, get_buses
+from app.api.views import read_view
 
 
-def get_tables_info():
-    with open("app/config/description.json") as f:
+def get_readwrite_json():
+    with open("app/config/readwrite.json") as f:
         data = json.load(f)
         return data
 
 
-def check_table(table_name):
-    for table in get_tables_info():
-        if table["table"] == table_name:
-            return True
-    return False
-
-
 def get_table_info(table_name):
-    for table in get_tables_info():
+    for table in get_readwrite_json():
         if table["table"] == table_name:
             return table
 
@@ -30,39 +25,45 @@ def get_table_types(table_name):
             "field": "Тип автобуса",
             "values": get_bus_types()
         }]
+    if table_name == 'day_schedule' or table_name == 'preferred':
+        return[{
+            "field": "Паспортные данные",
+            "values": get_drivers()
+        }, {
+            "field": "Автобус",
+            "values": get_buses()
+        }]
 
 
-def describe_table(table_name):
+def describe_table_or_view(table_name):
     cursor = db.cursor()
     query = f"DESCRIBE {table_name}"
     cursor.execute(query)
     field_names = []
     for field, type, null, key, default, extra in cursor:
         field_names.append(field)
+    cursor.close()
     return field_names
 
 
 def read_table(table_name):
-    cursor = db.cursor()
     table = get_table_info(table_name)
     types = get_table_types(table_name)
     if not table:
-        raise Exception(f"Invalid table name: {table_name}")
+        return read_view(table_name)
+    db_local = connector.connect(**Config.MYSQL_SETTINGS)
+    cursor = db_local.cursor()
     query = f"SELECT * FROM {table_name}"
+    print(f"Executing: {query}")
     cursor.execute(query)
     res = [tuple(table["columns"])]
     [res.append(data) for data in cursor]
     cursor.close()
+    db_local.disconnect()
     return res, types
 
 
 def delete_special_cases(table_name, old_row):
-    if table_name == 'buses':
-        cursor = db.cursor()
-        query = f"CALL delete_bus({old_row[0]})"
-        cursor.execute(query)
-        cursor.close()
-        return True
     return False
 
 
@@ -70,16 +71,19 @@ def save_table(table_name, data):
     old_table, types = read_table(table_name)
     if not old_table:
         raise Exception(f"Invalid table name: {table_name}")
-    table_header = describe_table(table_name)
+    db_local = connector.connect(**Config.MYSQL_SETTINGS)
+    table_header = describe_table_or_view(table_name)
     for old, new in zip(old_table[1:], data):
         row_changed = False
         # =============== Handle delete ===============
         if new == '%DELETE THIS%':
             if delete_special_cases(table_name, old):
                 continue
-            cursor = db.cursor()
+            cursor = db_local.cursor()
             query = f"DELETE FROM {table_name} WHERE "
             for column, old_value in zip(table_header, old):
+                if old_value is None:
+                    continue
                 query += f"{column}='{old_value}' AND "
             query = query[:-5]
             print(f"Executing: {query}")
@@ -91,11 +95,13 @@ def save_table(table_name, data):
                 row_changed = True
         # =============== Handle update ===============
         if row_changed:
-            cursor = db.cursor()
+            cursor = db_local.cursor()
             query = f"UPDATE {table_name} SET "
             where = "WHERE "
             for column, old_value, new_value in zip(table_header, old, new):
                 query += f"{column}='{new_value}', "
+                if old_value is None:
+                    continue
                 where += f"{column}='{old_value}' AND "
             query = query[:-2] + " " + where[:-5]
             print(f"Executing: {query}")
@@ -104,7 +110,7 @@ def save_table(table_name, data):
     # =============== Handle insert ===============
     if len(data) > (len(old_table) - 1):
         for new_row in data[len(old_table)-1:]:
-            cursor = db.cursor()
+            cursor = db_local.cursor()
             query = f"INSERT INTO {table_name} VALUES ("
             for value in new_row:
                 query += f"'{value}', "
@@ -112,4 +118,8 @@ def save_table(table_name, data):
             print(f"Executing: {query}")
             cursor.execute(query)
             cursor.close()
+    db_local.commit()
+    db_local.disconnect()
+
+
 

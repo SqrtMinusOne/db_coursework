@@ -8,18 +8,14 @@ cursor = db.cursor()
 
 class DataBaseTest(unittest.TestCase):
     def test_get_tables(self):
-        tables = get_tables_info()
+        tables = get_readwrite_json()
         self.assertIsNotNone(tables)
         self.assertGreater(len(tables), 0)
-
-    def test_check_tables(self):
-        self.assertTrue(check_table("buses"))
-        self.assertFalse(check_table("b1uses"))
 
     def test_read_table(self):
         buses = read_table("buses")
         self.assertIsNotNone(buses)
 
     def test_describe_table(self):
-        desc = describe_table("buses")
+        desc = describe_table_or_view("buses")
         self.assertIsNotNone(desc)

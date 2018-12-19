@@ -8,9 +8,14 @@ CORS(app)
 db = connector.connect(**Config.MYSQL_SETTINGS)
 
 
+def reconnect():
+    global db
+    db = connector.connect(**Config.MYSQL_SETTINGS)
+
+
 @app.route('/')
 def hello_world():
     return 'Hello World!'
 
 
-from app.routing import tableRoutes
+from app.routing import tableViewRoutes

@@ -1,0 +1,27 @@
+[
+  {
+    "table": "routes_not_fully_covered",
+    "name": "Пробелы в расписании",
+    "columns": ["№ маршрута", "№ автобуса", "Причина"]
+  },
+  {
+    "table": "routes_not_fully_covered_today",
+    "name": "Непокрытые маршурты",
+    "columns": ["№ маршрута", "№ автобуса", "Причина"]
+  },
+  {
+    "table": "buses_by_type",
+    "name": "Сводка по автобусам",
+    "columns": ["Тип автобуса", "Количество"]
+  },
+  {
+    "table": "drivers_by_class",
+    "name": "Сводка по классам водителей",
+    "columns": ["Класс", "Количество"]
+  },
+  {
+    "table": "day_schedule_wo_passport",
+    "name": "Расписание",
+    "columns": ["ФИО водителя", "Автобус", "Маршрут"]
+  }
+]

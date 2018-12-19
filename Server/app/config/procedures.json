@@ -1,0 +1,38 @@
+[
+  {
+    "procedure": "calculate_salaries",
+    "args": [],
+    "name": "Зарплаты",
+    "columns": ["Паспортные данные", "ФИО", "Стаж", "Класс", "Зарплата"]
+  },
+  {
+    "procedure": "create_day_schedule",
+    "args": [],
+    "name": "Создать расписание на день",
+    "columns": []
+  },
+  {
+    "procedure": "get_buses_on_route",
+    "args": [
+      "route_number"
+    ],
+    "name": "Автобусы на маршруте",
+    "columns": ["Номер", "Тип", "Доступен сегодня"]
+  },
+  {
+    "procedure": "get_drivers_on_route",
+    "args": [
+      "route_number"
+    ],
+    "name": "Водители на маршруте",
+    "columns": ["ФИО", "Класс", "Стаж", "Доступен сегодня"]
+  },
+  {
+    "procedure": "get_routes_in_point",
+    "args": [
+      "point"
+    ],
+    "name": "Маршруты через точку",
+    "columns": ["Номер маршрута", "Начало", "Конец", "Время начала", "Время конца", "Интервал", "Дистанция"]
+  }
+]
