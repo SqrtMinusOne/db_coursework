@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import '../App.css'
-import {ReadOnlyTable} from "./readOnlyTable";
 import $ from "jquery";
 import {LoadingPage} from "../page/loading";
 import {Card} from "../page/cards";
-import {Table} from "./table";
+import {ReadOnlyTableWithoutCard} from "./readOnlyTableWithoutCard";
 
 
 export class GroupReport extends Component{
@@ -86,17 +85,9 @@ export class GroupReport extends Component{
 }
 
 class RouteGroupTable extends Component{
-	constructor(props){
+	constructor(props) {
 		super(props);
 		this.getRowClass = this.getRowClass.bind(this);
-	}
-	onRowClick(row, index){
-		this.props.onRowClick && this.props.onRowClick(row, index);
-	}
-	onRowContextMenu(row, index, event){
-		console.log(row, index);
-		event.preventDefault();
-		this.props.onRowContextMenu && this.props.onRowContextMenu(row, index)
 	}
 	getRowClass(index){
 		let color = '';
@@ -121,23 +112,34 @@ class RouteGroupTable extends Component{
 					}
 				</tr>
 				</thead>
-				<tbody>
 				{
 					this.props.data.map((row, index)=>{
 						let rowClass = this.getRowClass(index);
 						return (
-							<tr className={rowClass} key={index} onClick={this.onRowClick.bind(this, row, index)}
-							    onContextMenu={this.onRowContextMenu.bind(this, row, index)}>
-								{
-									row.map((column, col_index)=>(
-										<td key={(index+1)*col_index}>{column}</td>
-									))
-								}
-							</tr>
+							<tbody key={index}>
+								<tr className={rowClass}>
+									{
+										row.map((column, col_index)=>(
+											<td key={(index+1)*col_index}>{column}</td>
+										))
+									}
+								</tr>
+								<tr className={rowClass}>
+									<td colSpan={row.length}>
+										<b>Водители на маршруте</b>
+										<ReadOnlyTableWithoutCard tableName={`get_drivers_on_route&0=${row[0]}`}/>
+									</td>
+								</tr>
+								<tr className={rowClass}>
+									<td colSpan={row.length}>
+										<b>Автобусы на маршруте</b>
+										<ReadOnlyTableWithoutCard tableName={`get_buses_on_route&0=${row[0]}`}/>
+									</td>
+								</tr>
+							</tbody>
 						)
 					})
 				}
-				</tbody>
 			</table>
 		)
 	}
