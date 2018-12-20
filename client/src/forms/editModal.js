@@ -77,26 +77,47 @@ export class EditModal extends Component{
 					</header>
 					<div>
 						{
-							this.state.data.map((field, index)=>(
-								<div key={index}>
-									<label>{field.text}</label>
-									{field.type === 'select' ?
-										(<select className={"w3-select w3-margin-bottom"} defaultValue={field.value}
-											name={index} onChange={this.handleChange}>
-											{field.values.map((value, field_index)=>(
-												<option key={field_index} value={value[0]}>{value[1]}</option>
-											))}
-										</select>)
-										:
-										(<input className={"w3-input w3-margin-bottom"} type={field.type}
-										       name={index} defaultValue={field.value} onChange={this.handleChange}/>)
-									}
-								</div>
-							))
+							this.state.data.map((field, index)=>{
+								let input;
+								if (field.type !== 'select'){
+									input = (
+										<input className={"w3-input w3-margin-bottom"} type={field.type}
+										       name={index} defaultValue={field.value} onChange={this.handleChange}/>
+									)
+								} else{
+									input = (
+										<GroupSelect defaultValue={field.value} name={index}
+										             onChange={this.handleChange} values={field.values}>
+										</GroupSelect>
+									)
+								}
+								return(
+									<div key={index}>
+										<label>{field.text}</label>
+										{input}
+									</div>
+								)})
 						}
 					</div>
 					<button className={"w3-button w3-orange w3-margin-bottom"} onClick={this.handleSave}>Сохранить</button>
 				</div>
 			</div>)
 	}
+}
+
+function GroupSelect(props){
+	let fields = [];
+	let global_key = 0;
+	for (let value_group of props.values){
+		fields.push(<option key={global_key++} disabled>{value_group.name}</option>);
+		for (let value of value_group.values){
+			fields.push(<option key={global_key++} value={value[0]}>{value[1]}</option>)
+		}
+	}
+	return(
+		<select className={"w3-select w3-margin-bottom"} defaultValue={props.defaultValue} name={props.name}
+		        onChange={props.onChange}>
+			{fields.map((field)=>(field))}
+		</select>
+	)
 }

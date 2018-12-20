@@ -3,7 +3,8 @@ from mysql import connector
 from app import db, Config
 import json
 
-from app.api.types import get_bus_types, get_drivers, get_buses
+from app.api.types import get_bus_types, get_drivers, get_buses, get_preferred_drivers, get_preferred_buses, \
+    get_day_buses, get_day_drivers
 from app.api.views import read_view
 
 
@@ -25,13 +26,21 @@ def get_table_types(table_name):
             "field": "Тип автобуса",
             "values": get_bus_types()
         }]
-    if table_name == 'day_schedule' or table_name == 'preferred':
+    if table_name == 'day_schedule':
         return[{
             "field": "Паспортные данные",
-            "values": get_drivers()
+            "values": get_day_drivers()
         }, {
             "field": "Автобус",
-            "values": get_buses()
+            "values": get_day_buses()
+        }]
+    if table_name == 'preferred':
+        return[{
+            "field": "Паспортные данных",
+            "values": get_preferred_drivers()
+        }, {
+            "field": "Автобус",
+            "values": get_preferred_buses()
         }]
 
 

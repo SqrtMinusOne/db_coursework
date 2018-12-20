@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
 import '../App.css'
-import {Card} from "../page/cards";
 import {LoadingPage} from "../page/loading";
 import {Table} from "./table";
 
@@ -46,7 +45,6 @@ export class ReadOnlyTableWithoutCard extends Component{
 			return;
 		this.request_pending = true;
 		let url = `http://127.0.0.1:5000/table?table_name=${tableName}`;
-		console.log(this.state.params_list);
 		for (let i=0; i < this.state.params_list.length; i++)
 			url += `&${i}=${this.state.params_list[i]}`;
 
@@ -57,7 +55,6 @@ export class ReadOnlyTableWithoutCard extends Component{
 		}).then(function (response) {
 			if (response.ok){
 				let data = JSON.parse(response.data);
-				console.log(data);
 				let header = data[0];
 				data.splice(0, 1);
 				this.setState({

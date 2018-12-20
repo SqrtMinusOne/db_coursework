@@ -16,29 +16,39 @@ class App extends Component {
 			sidebarToggled: false,
 			currentPage: 'buses'
 		};
-
 		this.buttons = {
-			buses: 'Список автобусов',
-			drivers: 'Список водителей',
-			routes: 'Список маршрутов',
-			class_coef: 'Коэффициенты классов',
-			experience_coef: 'Коэффициенты стажа',
-			bus_types: 'Типы автобусов',
-		};
-		this.reportButtons = {
-			buses_by_type: 'Свобка по автобусам',
-			drivers_by_class: 'Сводка по водителям',
-			routes_not_fully_covered_today: 'Непокрытые маршруты',
-			calculate_salaries: 'Зарплаты',
-			buses_on_route: 'Автобусы на маршруте',
-			drivers_on_route: 'Водители на маршруте',
-			routes_in_point: 'Машруты через точку',
-			statistics: 'Общая статистика',
-			group: 'Общий отчёт'
-		};
-		this.scheduleButtons = {
-			schedule: 'Составление расписания'
-		};
+			"Автобусы": {
+				buses: 'Список автобусов',
+				bus_types: 'Типы автобусов',
+				buses_by_type: 'Сводка по автобусам',
+				buses_on_route: 'Автобусы на маршруте',
+			},
+			"Водители": {
+				drivers: 'Список водителей',
+				drivers_by_class: 'Сводка по водителям',
+				drivers_on_route: 'Водители на маршруте',
+			},
+			"Машруты": {
+				routes: 'Список маршрутов',
+				routes_not_fully_covered_today: 'Непокрытые маршруты',
+				routes_in_point: 'Машруты через точку',
+			},
+			"Выплаты": {
+				class_coef: 'Коэффициенты классов',
+				experience_coef: 'Коэффициенты стажа',
+				calculate_salaries: 'Зарплаты',
+			},
+			"Автопарк": {
+				buses_info: "Автобусы с водителями",
+				preferred: 'Предпочитают водить',
+				schedule: 'Составление расписания',
+			},
+			"":{
+				statistics: 'Общая статистика',
+				group: 'Общий отчёт',
+			}
+
+		}
 
 		this.toggleSidebar = this.toggleSidebar.bind(this);
 		this.handleButton = this.handleButton.bind(this);
@@ -55,7 +65,7 @@ class App extends Component {
 	}
 
 	handleButton(new_page){
-		this.setState({currentPage: new_page})
+		this.setState({currentPage: new_page, sidebarToggled: false})
 	}
 
 	render() {
@@ -67,6 +77,7 @@ class App extends Component {
 				case 'class_coef': return(<EditableTable tableName="class_coef" header="Коэффициент класса"/>);
 				case 'experience_coef': return(<EditableTable tableName="experience_coef" header="Коэффициенты стажа"/>);
 				case 'bus_types': return (<EditableTable tableName="bus_types" header="Типы автобусов"/>);
+				case 'preferred': return (<EditableTable tableName="preferred" header="Предпочитают водить"/>);
 				case 'buses_by_type': return(<ReadOnlyTable tableName="buses_by_type" header="Сводка по автобусам"/>);
 				case 'drivers_by_class': return(<ReadOnlyTable tableName="drivers_by_class" header="Сводка по водителям"/>);
 				case 'routes_not_fully_covered_today': return(<ReadOnlyTable tableName="routes_not_fully_covered_today"
@@ -78,6 +89,7 @@ class App extends Component {
 				                                                params={['Номер маршрута']}/>);
 				case 'routes_in_point': return (<ReadOnlyTable tableName="get_routes_in_point" header="Маршруты через точку"
 				                                               params={['Название остановки']}/>);
+				case 'buses_info': return (<ReadOnlyTable tableName="buses_info" header="Автобусы с водителями" />);
 				case 'schedule': return (<EditSchedule/>);
 				case 'statistics': return (<Statistics/>);
 				case 'group': return (<GroupReport/>);
@@ -94,8 +106,7 @@ class App extends Component {
 		return (
 			<div>
 				<Sidebar isShown={this.state.sidebarToggled} toggle={this.toggleSidebar} buttons={this.buttons}
-				         reportButtons={this.reportButtons} buttonClick={this.handleButton}
-				         scheduleButtons={this.scheduleButtons}/>
+				         buttonClick={this.handleButton}/>
 				<div style={mainContentStyle} className={mainContentClassName}>
 					<Header isSidebarShown={!this.state.sidebarToggled} toggleSidebar={this.toggleSidebar}/>
 					<div className={"main_content w3-container"}>
