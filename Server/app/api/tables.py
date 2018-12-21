@@ -36,7 +36,7 @@ def get_table_types(table_name):
         }]
     if table_name == 'preferred':
         return[{
-            "field": "Паспортные данных",
+            "field": "Паспортные данные",
             "values": get_preferred_drivers()
         }, {
             "field": "Автобус",

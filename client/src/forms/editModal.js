@@ -109,7 +109,8 @@ function GroupSelect(props){
 	let fields = [];
 	let global_key = 0;
 	for (let value_group of props.values){
-		fields.push(<option key={global_key++} disabled>{value_group.name}</option>);
+		if (value_group.name !== '%all%')
+			fields.push(<option key={global_key++} disabled>{value_group.name}</option>);
 		for (let value of value_group.values){
 			fields.push(<option key={global_key++} value={value[0]}>{value[1]}</option>)
 		}

@@ -10,7 +10,7 @@ export class ReadOnlyTable extends Component{
 		return(
 			<Card header={this.props.header}>
 				<ReadOnlyTableWithoutCard tableName={this.props.tableName} header={this.props.header}
-				                          params={this.props.params}/>
+				                          params={this.props.params} updateButton={this.props.updateButton}/>
 			</Card>
 		)
 	}
