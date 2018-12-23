@@ -8,6 +8,7 @@ export class EditSchedule extends Component{
 	constructor(props){
 		super(props);
 		this.handleCreateSchedule = this.handleCreateSchedule.bind(this);
+		this.handleUpdate = this.handleUpdate.bind(this);
 	}
 
 	handleCreateSchedule() {
@@ -16,9 +17,13 @@ export class EditSchedule extends Component{
 			method: 'GET',
 			crossDomain: true,
 		}).then(function (response) {
-			this.forceUpdate();
+			this.handleUpdate();
 		}.bind(this))
 
+	}
+
+	handleUpdate(){
+		this.forceUpdate();
 	}
 
 	render() {
@@ -26,7 +31,7 @@ export class EditSchedule extends Component{
 		return(
 			<div>
 				<HalfWidth>
-					<EditableTable tableName="day_schedule" header="Расписание на день" updateButton={true}/>
+					<EditableTable tableName="day_schedule" header="Расписание на день" onUpdate={this.handleUpdate}/>
 				</HalfWidth>
 				<HalfWidth>
 					<ReadOnlyTable tableName="routes_not_fully_covered_today" header="Непокрытые маршруты"

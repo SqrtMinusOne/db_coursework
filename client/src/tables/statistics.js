@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import '../App.css'
 import {ReadOnlyTable} from "./readOnlyTable";
 
@@ -6,9 +6,10 @@ import {ReadOnlyTable} from "./readOnlyTable";
 export function Statistics(props){
 	return(
 		<div>
-			<ReadOnlyTable tableName={"avg_drivers"} header={"Статистика по водителям"}/>
+			<ReadOnlyTable tableName={"statistics"} header={"Общая статистика"}/>
 			<ReadOnlyTable tableName={"max_experience"} header={"Водитель с максимальным опытом"}/>
-			<ReadOnlyTable tableName={"total_distance"} header={"Общая дистанция"}/>
+			<ReadOnlyTable tableName={"buses_by_type"} header={"Виды автобусов"}/>
+			<ReadOnlyTable tableName={"drivers_by_class"} header={"Классы водителей"}/>
 		</div>
 	)
 }

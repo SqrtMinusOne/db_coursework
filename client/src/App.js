@@ -8,6 +8,7 @@ import {ReadOnlyTable} from "./tables/readOnlyTable";
 import {EditSchedule} from "./tables/editSchedule";
 import {Statistics} from "./tables/statistics";
 import {GroupReport} from "./tables/groupReport";
+import {EditPreferred} from "./tables/editPreferred";
 
 class App extends Component {
 	constructor(props){
@@ -20,12 +21,12 @@ class App extends Component {
 			"Автобусы": {
 				buses: 'Список автобусов',
 				bus_types: 'Типы автобусов',
-				buses_by_type: 'Сводка по автобусам',
+				buses_by_type: 'Статистика по типам',
 				buses_on_route: 'Автобусы на маршруте',
 			},
 			"Водители": {
 				drivers: 'Список водителей',
-				drivers_by_class: 'Сводка по водителям',
+				drivers_by_class: 'Статистика по классам',
 				drivers_on_route: 'Водители на маршруте',
 			},
 			"Машруты": {
@@ -77,9 +78,9 @@ class App extends Component {
 				case 'class_coef': return(<EditableTable tableName="class_coef" header="Коэффициент класса"/>);
 				case 'experience_coef': return(<EditableTable tableName="experience_coef" header="Коэффициенты стажа"/>);
 				case 'bus_types': return (<EditableTable tableName="bus_types" header="Типы автобусов"/>);
-				case 'preferred': return (<EditableTable tableName="preferred" header="Предпочитают водить"/>);
-				case 'buses_by_type': return(<ReadOnlyTable tableName="buses_by_type" header="Сводка по автобусам"/>);
-				case 'drivers_by_class': return(<ReadOnlyTable tableName="drivers_by_class" header="Сводка по водителям"/>);
+				case 'preferred': return (<EditPreferred/>);
+				case 'buses_by_type': return(<ReadOnlyTable tableName="buses_by_type" header="Статистика по типам"/>);
+				case 'drivers_by_class': return(<ReadOnlyTable tableName="drivers_by_class" header="Статистика по классам"/>);
 				case 'routes_not_fully_covered_today': return(<ReadOnlyTable tableName="routes_not_fully_covered_today"
 				                                                             header="Непокрытые маршруты"/>);
 				case 'calculate_salaries': return (<ReadOnlyTable tableName="calculate_salaries" header="Зарплаты"/>);

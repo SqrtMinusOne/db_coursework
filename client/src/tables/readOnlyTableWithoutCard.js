@@ -22,7 +22,7 @@ export class ReadOnlyTableWithoutCard extends Component{
 		this.handleSaveParams = this.handleSaveParams.bind(this);
 		this.formParamFields = this.formParamFields.bind(this);
 		this.request_pending = false;
-		this.getInfo(this.props.tableName);
+		//this.getInfo(this.props.tableName);
 	}
 
 	canLoad(){
@@ -102,7 +102,15 @@ export class ReadOnlyTableWithoutCard extends Component{
 				});
 			}
 			else{
-				alert("Ошибка получения данных")
+				alert(`Ошибка получения данных: ${response.message}`);
+				if (this.props.params)
+					this.setState({
+						isLoading: !this.props.params,
+						data: null,
+						header: null,
+						params_entered: !this.props.params,
+						params_list: []
+					})
 			}
 			this.request_pending = false;
 		}.bind(this))

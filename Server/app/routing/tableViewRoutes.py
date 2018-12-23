@@ -26,6 +26,8 @@ def table():
     except OperationalError:
         reconnect()
         data, types = try_get()
+    except Exception as exp:
+        return jsonify({"ok": False, "message": str(exp)})
     data = json.dumps(data, indent=4, sort_keys=True, default=str)
     return jsonify({"ok": True, "data": data, "types": types})
 

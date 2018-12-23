@@ -114,9 +114,6 @@ def get_day_buses():
     }, {
         'name': 'Сломаны',
         'values': broken
-    }, {
-        'name': '',
-        'values': [('NULL', 'NULL')]
     }]
 
 

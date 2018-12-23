@@ -114,11 +114,12 @@ function GroupSelect(props){
 			fields.push(<option key={global_key++} disabled>{value_group.name}</option>);
 		for (let value of value_group.values){
 			fields.push(<option key={global_key++} value={value[0]}>{value[1]}</option>)
-			if (value[0] === 'NULL' && !defaultValue){
-				defaultValue = value[0];
-			}
 		}
 	}
+	if (!defaultValue){
+		defaultValue = 'NULL';
+	}
+	fields.push(<option key={global_key++} value={'NULL'}>{'NULL'}</option>);
 	return(
 		<select className={"w3-select w3-margin-bottom"} defaultValue={defaultValue} name={props.name}
 		        onChange={props.onChange}>

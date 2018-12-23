@@ -25,7 +25,7 @@ export class EditableTable extends Component{
 		this.handleUpdate = this.handleUpdate.bind(this);
 		this.handleCancel = this.handleCancel.bind(this);
 		this.handleAddModal = this.handleAddModal.bind(this);
-		this.getInfo(this.props.tableName);
+		//this.getInfo(this.props.tableName);
 		this.handleGetNewInfo = this.handleGetNewInfo.bind(this);
 	}
 
@@ -59,7 +59,7 @@ export class EditableTable extends Component{
 				});
 			}
 			else{
-				alert("Ошибка получения данных")
+				alert(`Ошибка получения данных: ${response.message}`);
 			}
 		}.bind(this))
 	}
@@ -133,6 +133,10 @@ export class EditableTable extends Component{
 				this.setState({
 					wasEdited: false,
 					marked_rows: []
+				}, ()=>{
+					if (this.props.onUpdate){
+						this.props.onUpdate();
+					}
 				})
 			}
 			else{
