@@ -108,15 +108,19 @@ export class EditModal extends Component{
 function GroupSelect(props){
 	let fields = [];
 	let global_key = 0;
+	let defaultValue = props.defaultValue;
 	for (let value_group of props.values){
-		if (value_group.name !== '%all%')
+		if (value_group.name !== '%all%' && value_group.name.length !== 0)
 			fields.push(<option key={global_key++} disabled>{value_group.name}</option>);
 		for (let value of value_group.values){
 			fields.push(<option key={global_key++} value={value[0]}>{value[1]}</option>)
+			if (value[0] === 'NULL' && !defaultValue){
+				defaultValue = value[0];
+			}
 		}
 	}
 	return(
-		<select className={"w3-select w3-margin-bottom"} defaultValue={props.defaultValue} name={props.name}
+		<select className={"w3-select w3-margin-bottom"} defaultValue={defaultValue} name={props.name}
 		        onChange={props.onChange}>
 			{fields.map((field)=>(field))}
 		</select>

@@ -1,4 +1,5 @@
 import json
+from contextlib import closing
 
 from mysql import connector
 
@@ -22,13 +23,11 @@ def read_view(view_name):
     table = get_view_info(view_name)
     if not table:
         return execute_procedure(view_name)
-    db_local = connector.connect(**Config.MYSQL_SETTINGS)
-    cursor = db_local.cursor()
-    query = f"SELECT * FROM {view_name}"
-    print(f"Executing: {query}")
-    cursor.execute(query)
-    res = [tuple(table["columns"])]
-    [res.append(data) for data in cursor]
-    cursor.close()
-    db_local.disconnect()
+    with closing(connector.connect(**Config.MYSQL_SETTINGS)) as db_local:
+        with closing(db_local.cursor()) as cursor:
+            query = f"SELECT * FROM {view_name}"
+            print(f"Executing: {query}")
+            cursor.execute(query)
+            res = [tuple(table["columns"])]
+            [res.append(data) for data in cursor]
     return res, None

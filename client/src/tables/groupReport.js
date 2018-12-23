@@ -125,15 +125,19 @@ class RouteGroupTable extends Component{
 									}
 								</tr>
 								<tr className={rowClass}>
-									<td colSpan={row.length}>
-										<b>Водители на маршруте</b>
-										<ReadOnlyTableWithoutCard tableName={`get_drivers_on_route&0=${row[0]}`}/>
+									<td colSpan={row.length} className={"w3-container"}>
+										<div className={"w3-card " + this.getRowClass(index + 1)} style={{padding: 6}}>
+											<b>Водители на маршруте</b>
+											<ReadOnlyTableWithoutCard tableName={`get_drivers_on_route&0=${row[0]}`}/>
+										</div>
 									</td>
 								</tr>
 								<tr className={rowClass}>
-									<td colSpan={row.length}>
-										<b>Автобусы на маршруте</b>
-										<ReadOnlyTableWithoutCard tableName={`get_buses_on_route&0=${row[0]}`}/>
+									<td colSpan={row.length} className={"w3-container"}>
+										<div className={"w3-card " + this.getRowClass(index + 1)} style={{padding: 6}}>
+											<b>Автобусы на маршруте</b>
+											<ReadOnlyTableWithoutCard tableName={`get_buses_on_route&0=${row[0]}`}/>
+										</div>
 									</td>
 								</tr>
 							</tbody>
