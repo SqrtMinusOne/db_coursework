@@ -1,11 +1,10 @@
+import json
 from contextlib import closing
 
 from mysql import connector
 
-from app import db, Config
-import json
-
-from app.api.types import get_bus_types, get_drivers, get_buses, get_preferred_drivers, get_preferred_buses, \
+from app import Config
+from app.api.types import get_bus_types, get_preferred_drivers, get_preferred_buses, \
     get_day_buses, get_day_drivers, get_preferred_routes, get_day_routes
 from app.api.views import read_view
 
@@ -79,11 +78,26 @@ def read_table(table_name):
 
 
 def delete_special_cases(table_name, old_row):
-    return False
+    if table_name == 'buses':
+        msgs = []
+        with closing(connector.connect(**Config.MYSQL_SETTINGS)) as db_local:
+            with closing(db_local.cursor()) as cursor:
+                query = f"SELECT bus, passport, route FROM preferred WHERE bus = {old_row[0]}"
+                cursor.execute(query)
+                for bus, passport, route in cursor:
+                    msgs.append(f"Внимание! Автобус был приписан к маршруту {route} и к водителю {passport}")
+            with closing(db_local.cursor()) as cursor:
+                query = f"SELECT bus, passport, route FROM day_schedule WHERE bus = {old_row[0]}"
+                cursor.execute(query)
+                for bus, passport, route in cursor:
+                    msgs.append(f"Внимание! Автобус записан в расписание на маршруте {route}")
+        return msgs
 
 
+# noinspection PyNoneFunctionAssignment
 def save_table(table_name, data):
     old_table, types = read_table(table_name)
+    messages = []
     if not old_table:
         raise Exception(f"Invalid table name: {table_name}")
     with closing(connector.connect(**Config.MYSQL_SETTINGS)) as db_local:
@@ -92,44 +106,61 @@ def save_table(table_name, data):
             row_changed = False
             # =============== Handle delete ===============
             if new == '%DELETE THIS%':
-                if delete_special_cases(table_name, old):
-                    continue
-                with closing(db_local.cursor()) as cursor:
-                    query = f"DELETE FROM {table_name} WHERE "
-                    for column, old_value in zip(table_header, old):
-                        if old_value is None:
-                            continue
-                        query += f"{column}='{old_value}' AND "
-                    query = query[:-5]
-                    print(f"Executing: {query}")
-                    cursor.execute(query)
+                res = process_delete(db_local, old, table_header, table_name)
+                messages.extend(res) if res else None
                 continue
+            # =============== Handle update ===============
             for old_value, new_value in zip(old, new):
                 if old_value != new_value:
                     row_changed = True
-            # =============== Handle update ===============
             if row_changed:
-                with closing(db_local.cursor()) as cursor:
-                    query = f"UPDATE {table_name} SET "
-                    where = "WHERE "
-                    for column, old_value, new_value in zip(table_header, old, new):
-                        query += f"{column}='{new_value}', "
-                        if old_value is None:
-                            continue
-                        where += f"{column}='{old_value}' AND "
-                    query = query[:-2] + " " + where[:-5]
-                    print(f"Executing: {query}")
-                    cursor.execute(query)
+                res = process_update(db_local, new, old, table_header, table_name)
+                messages.extend(res) if res else None
         # =============== Handle insert ===============
         if len(data) > (len(old_table) - 1):
-            for new_row in data[len(old_table)-1:]:
-                with closing(db_local.cursor()) as cursor:
-                    query = f"INSERT INTO {table_name} VALUES ("
-                    for value in new_row:
-                        query += f"'{value}', "
-                    query = query[:-2] + ")"
-                    print(f"Executing: {query}")
-                    cursor.execute(query)
+            res = process_insert(data, db_local, old_table, table_name)
+            messages.extend(res) if res else None
         db_local.commit()
+    return messages
 
+
+def process_insert(data, db_connection, old_table, table_name):
+    for new_row in data[len(old_table) - 1:]:
+        with closing(db_connection.cursor()) as cursor:
+            query = f"INSERT INTO {table_name} VALUES ("
+            for value in new_row:
+                query += f"'{value}', "
+            query = query[:-2] + ")"
+            print(f"Executing: {query}")
+            cursor.execute(query)
+    return None
+
+
+def process_update(db_connection, new_line, old_line, table_header, table_name):
+    with closing(db_connection.cursor()) as cursor:
+        query = f"UPDATE {table_name} SET "
+        where = "WHERE "
+        for column, old_value, new_value in zip(table_header, old_line, new_line):
+            query += f"{column}='{new_value}', "
+            if old_value is None:
+                continue
+            where += f"{column}='{old_value}' AND "
+        query = query[:-2] + " " + where[:-5]
+        print(f"Executing: {query}")
+        cursor.execute(query)
+    return None
+
+
+def process_delete(db_connection, old_line, table_header, table_name):
+    msg = delete_special_cases(table_name, old_line)
+    with closing(db_connection.cursor()) as cursor:
+        query = f"DELETE FROM {table_name} WHERE "
+        for column, old_value in zip(table_header, old_line):
+            if old_value is None:
+                return
+            query += f"{column}='{old_value}' AND "
+        query = query[:-5]
+        print(f"Executing: {query}")
+        cursor.execute(query)
+    return msg
 

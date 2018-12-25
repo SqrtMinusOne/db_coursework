@@ -48,7 +48,7 @@ class ButtonDropDown extends Component{
 		let arrow = this.state.toggled ? "▲ " : "▼";
 		if (label === ""){
 			return(<ButtonList buttons={this.props.buttons} handleButton={this.props.handleButton}
-				theme={"w3-theme-d1"}/>)
+				theme={"w3-theme-d1"} spaces={0}/>)
 		}
 		return (
 			<div className={"w3-dropdown-click w3-theme-l1"}>
@@ -61,7 +61,7 @@ class ButtonDropDown extends Component{
 				</button>
 				<div className={"w3-dropdown-content w3-bar-block w3-animate-left " +
 								(this.state.toggled ? 'w3-show': '')}>
-					<ButtonList buttons={this.props.buttons} handleButton={this.props.handleButton} />
+					<ButtonList buttons={this.props.buttons} handleButton={this.props.handleButton} spaces={4} />
 				</div>
 			</div>
 		)
@@ -76,7 +76,7 @@ function ButtonList(props){
 				Object.keys(props.buttons).map((key, index)=>(
 					<button key={index} onClick={props.handleButton.bind(this, key)}
 					        className={"w3-bar-item w3-button " + (props.theme ? props.theme : 'w3-theme')}>
-						{props.buttons[key]}
+						{'\u00A0'.repeat(props.spaces) + props.buttons[key]}
 					</button>
 				))
 			}

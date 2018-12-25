@@ -21,4 +21,4 @@ def hello_world():
     return 'Hello World!'
 
 
-from app.routing import tableViewRoutes
+from app.routing import tableViewRoutes, typeRoutes

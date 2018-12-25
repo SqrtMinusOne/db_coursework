@@ -4,6 +4,7 @@ import $ from "jquery";
 import {LoadingPage} from "../page/loading";
 import {Card} from "../page/cards";
 import {ReadOnlyTableWithoutCard} from "./readOnlyTableWithoutCard";
+import {MessageModal} from "../modals/messageModal";
 
 
 export class GroupReport extends Component{
@@ -13,13 +14,16 @@ export class GroupReport extends Component{
 			isLoading: true,
 			data: null,
 			header: null,
+			// eslint-disable-next-line eqeqeq
 			params: this.props.params!=undefined,
 			params_list: [],
 			params_entered: false,
 			marked_rows: [],
+			message: null
 		};
 		this.getInfo = this.getInfo.bind(this);
 		this.updateInfo = this.updateInfo.bind(this);
+		this.handleCloseMessage = this.handleCloseMessage.bind(this);
 		this.request_pending = false
 	}
 
@@ -63,10 +67,18 @@ export class GroupReport extends Component{
 				});
 			}
 			else{
-				alert("Ошибка получения данных")
+				this.setState({
+					message: `Ошибка получения данных: ${response.message}`
+				});
 			}
 			this.request_pending = false;
 		}.bind(this))
+	}
+
+	handleCloseMessage() {
+		this.setState({
+			message: null
+		})
 	}
 
 	render(){
@@ -74,6 +86,7 @@ export class GroupReport extends Component{
 			return (<LoadingPage/>);
 		return(
 			<div>
+				<MessageModal header={"Cообщение"} content={this.state.message} onClose={this.handleCloseMessage}/>
 				<Card header="Общий отчёт" footer="Корытов Павел, 6304">
 					{(!this.props.params || (this.state.params && this.props.params)) &&
 					<RouteGroupTable data={this.state.data} header={this.state.header}/>

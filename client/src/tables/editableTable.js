@@ -4,7 +4,8 @@ import '../App.css'
 import {Card} from "../page/cards";
 import {LoadingPage} from "../page/loading";
 import {Table} from "./table";
-import {EditModal} from "../forms/editModal";
+import {EditModal} from "../modals/editModal";
+import {MessageModal} from "../modals/messageModal";
 
 export class EditableTable extends Component{
 	constructor(props){
@@ -16,7 +17,8 @@ export class EditableTable extends Component{
 			editing: null,
 			opt_fields: null,
 			wasEdited: false,
-			marked_rows: []
+			marked_rows: [],
+			message: null,
 		};
 		this.getInfo = this.getInfo.bind(this);
 		this.handleRowClick = this.handleRowClick.bind(this);
@@ -27,6 +29,7 @@ export class EditableTable extends Component{
 		this.handleAddModal = this.handleAddModal.bind(this);
 		//this.getInfo(this.props.tableName);
 		this.handleGetNewInfo = this.handleGetNewInfo.bind(this);
+		this.handleCloseMessage = this.handleCloseMessage.bind(this);
 	}
 
 	componentWillMount() {
@@ -59,7 +62,9 @@ export class EditableTable extends Component{
 				});
 			}
 			else{
-				alert(`Ошибка получения данных: ${response.message}`);
+				this.setState({
+					message: `Ошибка получения данных: ${response.message}`
+				});
 			}
 		}.bind(this))
 	}
@@ -132,7 +137,8 @@ export class EditableTable extends Component{
 				this.getInfo(this.props.tableName);
 				this.setState({
 					wasEdited: false,
-					marked_rows: []
+					marked_rows: [],
+					message: response.message
 				}, ()=>{
 					if (this.props.onUpdate){
 						this.props.onUpdate();
@@ -140,7 +146,9 @@ export class EditableTable extends Component{
 				})
 			}
 			else{
-				alert(response.message);
+				this.setState({
+					message: response.message
+				})
 			}
 		}.bind(this))
 	}
@@ -156,6 +164,12 @@ export class EditableTable extends Component{
 	handleAddModal() {
 		this.setState({
 			editing: this.state.data.length
+		})
+	}
+
+	handleCloseMessage() {
+		this.setState({
+			message: null
 		})
 	}
 
@@ -181,6 +195,7 @@ export class EditableTable extends Component{
 		}
 		return(
 			<div>
+				<MessageModal header={"Сообщение"} content={this.state.message} onClose={this.handleCloseMessage}/>
 				{modal}
 				<Card header={this.props.header} footer="Корытов Павел, 6304">
 					{buttons.map((button)=>(

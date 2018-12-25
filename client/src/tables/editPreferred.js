@@ -20,8 +20,8 @@ export class EditPreferred extends Component{
 					<EditableTable tableName="preferred" header="Предпочитают водить" onUpdate={this.handleUpdate}/>
 				</HalfWidth>
 				<HalfWidth>
-					<ReadOnlyTable tableName="preferred_statistics" header="Статистика" updateButton={true}/>
-					<ReadOnlyTable tableName="routes_assigned" header="Водителей на маршрутах" updateButton={true}/>
+					<ReadOnlyTable tableName="preferred_statistics" header="Статистика"/>
+					<ReadOnlyTable tableName="routes_assigned" header="Водителей на маршрутах"/>
 				</HalfWidth>
 			</div>
 		)

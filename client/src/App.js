@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import {$} from 'jquery';
 import {Header} from "./page/header";
 import './App.css';
 import {Sidebar} from "./page/sidebar";
@@ -49,7 +48,8 @@ class App extends Component {
 				group: 'Общий отчёт',
 			}
 
-		}
+		};
+
 
 		this.toggleSidebar = this.toggleSidebar.bind(this);
 		this.handleButton = this.handleButton.bind(this);
@@ -85,11 +85,11 @@ class App extends Component {
 				                                                             header="Непокрытые маршруты"/>);
 				case 'calculate_salaries': return (<ReadOnlyTable tableName="calculate_salaries" header="Зарплаты"/>);
 				case 'buses_on_route': return (<ReadOnlyTable tableName="get_buses_on_route" header="Автобусы на маршруте"
-				                                              params={['Номер маршрута']}/>);
+				                                              params={[['Номер маршрута', 'routes']]}/>);
 				case 'drivers_on_route': return (<ReadOnlyTable tableName="get_drivers_on_route" header="Водители на маршруте"
-				                                                params={['Номер маршрута']}/>);
+				                                                params={[['Номер маршрута', 'routes']]}/>);
 				case 'routes_in_point': return (<ReadOnlyTable tableName="get_routes_in_point" header="Маршруты через точку"
-				                                               params={['Название остановки']}/>);
+				                                               params={[['Название остановки', 'points']]}/>);
 				case 'buses_info': return (<ReadOnlyTable tableName="buses_info" header="Автобусы с водителями" />);
 				case 'schedule': return (<EditSchedule/>);
 				case 'statistics': return (<Statistics/>);

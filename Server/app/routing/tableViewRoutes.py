@@ -6,6 +6,15 @@ from app.api.procedures import NotEnoughArgsException, execute_procedure
 from app.api.tables import *
 
 
+def get_messages(msg_list):
+    if not msg_list:
+        return None
+    res = "Сообщения: \n"
+    for msg in msg_list:
+        res += msg + "; \n"
+    return res
+
+
 @app.route('/table')
 def table():
     def try_get():
@@ -36,9 +45,7 @@ def table():
 def table_change():
     req_data = request.get_json()
     try:
-        save_table(req_data['table'], req_data['data'])
+        res = save_table(req_data['table'], req_data['data'])
     except Exception as exp:
-        db.rollback()
         return jsonify({"ok": False, "message": str(exp)})
-    db.commit()
-    return jsonify({"ok": True})
+    return jsonify({"ok": True, "message": get_messages(res)})

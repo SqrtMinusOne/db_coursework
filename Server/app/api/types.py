@@ -7,6 +7,7 @@ from app import db, Config
 
 # TODO Refactor
 
+
 def get_bus_types():
     with closing(connector.connect(**Config.MYSQL_SETTINGS)) as db_local:
         with closing(db_local.cursor()) as cursor:
@@ -131,14 +132,28 @@ def get_drivers():
     }]
 
 
-def get_buses():
+def get_points():
+    res = []
     with closing(connector.connect(**Config.MYSQL_SETTINGS)) as db_local:
         with closing(db_local.cursor()) as cursor:
-            query = "SELECT DISTINCT bus_number, type FROM buses"
+            query = "SELECT start_point FROM get_all_points"
             cursor.execute(query)
-            res = []
-            for bus, bus_type in cursor:
-                res.append((bus, f"{bus}({bus_type})"))
+            for point in cursor:
+                res.append((point[0], point[0]))
+    return [{
+        'name': '%all%',
+        'values': res
+    }]
+
+
+def get_routes():
+    res = []
+    with closing(connector.connect(**Config.MYSQL_SETTINGS)) as db_local:
+        with closing(db_local.cursor()) as cursor:
+            query = "SELECT route_number, start_point, end_point  FROM routes"
+            cursor.execute(query)
+            for route, start, end in cursor:
+                res.append((route, f"{route} ({start} - {end})"))
     return [{
         'name': '%all%',
         'values': res

@@ -34,8 +34,7 @@ export class EditSchedule extends Component{
 					<EditableTable tableName="day_schedule" header="Расписание на день" onUpdate={this.handleUpdate}/>
 				</HalfWidth>
 				<HalfWidth>
-					<ReadOnlyTable tableName="routes_not_fully_covered_today" header="Непокрытые маршруты"
-						updateButton={true}/>
+					<ReadOnlyTable tableName="routes_not_fully_covered_today" header="Непокрытые маршруты"/>
 					<Card header="Управление">
 						<div className='w3-bar w3-margin-top'>
 							<button className={button_class} onClick={this.handleCreateSchedule}>Составить расписание</button>
