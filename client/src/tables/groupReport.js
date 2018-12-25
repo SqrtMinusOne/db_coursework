@@ -5,6 +5,7 @@ import {LoadingPage} from "../page/loading";
 import {Card} from "../page/cards";
 import {ReadOnlyTableWithoutCard} from "./readOnlyTableWithoutCard";
 import {MessageModal} from "../modals/messageModal";
+import {Collapsible} from "../page/collapsible";
 
 
 export class GroupReport extends Component{
@@ -14,16 +15,12 @@ export class GroupReport extends Component{
 			isLoading: true,
 			data: null,
 			header: null,
-			// eslint-disable-next-line eqeqeq
-			params: this.props.params!=undefined,
-			params_list: [],
-			params_entered: false,
-			marked_rows: [],
 			message: null
 		};
 		this.getInfo = this.getInfo.bind(this);
 		this.updateInfo = this.updateInfo.bind(this);
 		this.handleCloseMessage = this.handleCloseMessage.bind(this);
+		this.getRowClass = this.getRowClass.bind(this);
 		this.request_pending = false
 	}
 
@@ -43,11 +40,7 @@ export class GroupReport extends Component{
 		if (this.request_pending)
 			return;
 		this.request_pending = true;
-		let url = `http://127.0.0.1:5000/table?table_name=routes`;
-		console.log(this.state.params_list);
-		for (let i=0; i < this.state.params_list.length; i++)
-			url += `&${i}=${this.state.params_list[i]}`;
-
+		let url = `http://127.0.0.1:5000/table?table_name=bus_types`;
 		$.ajax({
 			url: url,
 			method: 'GET',
@@ -81,6 +74,18 @@ export class GroupReport extends Component{
 		})
 	}
 
+	getRowClass(index){
+		let color = '';
+		if (this.props.marked && this.props.marked.indexOf(index)>=0){
+			color =  'w3-red';
+		}
+		else
+			color = index % 2 === 0 ? 'w3-theme-l1' : 'w3-theme-d2';
+		if (this.props.onRowClick || this.props.onRowContextMenu)
+			color += ' w3-hover-deep-orange';
+		return color;
+	}
+
 	render(){
 		if (this.state.isLoading)
 			return (<LoadingPage/>);
@@ -88,20 +93,95 @@ export class GroupReport extends Component{
 			<div>
 				<MessageModal header={"Cообщение"} content={this.state.message} onClose={this.handleCloseMessage}/>
 				<Card header="Общий отчёт" footer="Корытов Павел, 6304">
-					{(!this.props.params || (this.state.params && this.props.params)) &&
-					<RouteGroupTable data={this.state.data} header={this.state.header}/>
-					}
+					<table className={"w3-table w3-border w3-bordered w3-striped"}>
+						<thead>
+
+						</thead>
+						{
+							this.state.data.map((row, index)=>{
+								let rowClass = this.getRowClass(index);
+								return (
+									<tbody key={index}>
+									<TableHeader header={this.state.header}/>
+									<tr className={rowClass}>
+										{
+											row.map((column, col_index)=>(
+												<td key={(index+1)*col_index}>{column}</td>
+											))
+										}
+									</tr>
+									<tr className={rowClass}>
+										<td colSpan={row.length} className={"w3-container"}>
+											<RouteGroupReport busType={row[0]}/>
+										</td>
+									</tr>
+									</tbody>
+								)
+							})
+						}
+					</table>
 				</Card>
 			</div>
 		)
 	}
 }
 
-class RouteGroupTable extends Component{
+class RouteGroupReport extends Component{
 	constructor(props) {
 		super(props);
 		this.getRowClass = this.getRowClass.bind(this);
+		this.getInfo = this.getInfo.bind(this);
+		this.state = {
+			isLoading: true,
+			data: null,
+			header: null,
+		}
 	}
+
+	componentWillMount() {
+		this.updateInfo();
+	}
+
+	componentWillReceiveProps(nextProps, nextContext) {
+		this.updateInfo();
+	}
+
+	updateInfo(){
+		this.getInfo();
+	}
+
+	getInfo(){
+		if (this.request_pending)
+			return;
+		this.request_pending = true;
+		let url = `http://127.0.0.1:5000/table?table_name=get_routes_on_type&0=${this.props.busType}`;
+		$.ajax({
+			url: url,
+			method: 'GET',
+			crossDomain: true,
+		}).then(function (response) {
+			if (response.ok){
+				let data = JSON.parse(response.data);
+				console.log(data);
+				let header = data[0];
+				data.splice(0, 1);
+				this.setState({
+					isLoading: false,
+					data: data,
+					header: header,
+					opt_fields: response.types,
+					params: true
+				});
+			}
+			else{
+				this.setState({
+					message: `Ошибка получения данных: ${response.message}`
+				});
+			}
+			this.request_pending = false;
+		}.bind(this))
+	}
+
 	getRowClass(index){
 		let color = '';
 		if (this.props.marked && this.props.marked.indexOf(index)>=0){
@@ -114,45 +194,37 @@ class RouteGroupTable extends Component{
 		return color;
 	}
 	render(){
+		if (this.state.isLoading)
+			return (<LoadingPage/>);
 		return(
 			<table className={"w3-table w3-border w3-bordered w3-striped"}>
 				<thead>
-				<tr className={"w3-theme-d5"}>
-					{
-						this.props.header.map((col_name)=>(
-							<th key={col_name}>{col_name}</th>
-						))
-					}
-				</tr>
+				<TableHeader header={this.state.header}/>
 				</thead>
 				{
-					this.props.data.map((row, index)=>{
+					this.state.data.map((row, index)=>{
 						let rowClass = this.getRowClass(index);
 						return (
 							<tbody key={index}>
-								<tr className={rowClass}>
-									{
-										row.map((column, col_index)=>(
-											<td key={(index+1)*col_index}>{column}</td>
-										))
-									}
-								</tr>
-								<tr className={rowClass}>
-									<td colSpan={row.length} className={"w3-container"}>
-										<div className={"w3-card " + this.getRowClass(index + 1)} style={{padding: 6}}>
-											<b>Водители на маршруте</b>
-											<ReadOnlyTableWithoutCard tableName={`get_drivers_on_route&0=${row[0]}`}/>
-										</div>
-									</td>
-								</tr>
-								<tr className={rowClass}>
-									<td colSpan={row.length} className={"w3-container"}>
-										<div className={"w3-card " + this.getRowClass(index + 1)} style={{padding: 6}}>
-											<b>Автобусы на маршруте</b>
-											<ReadOnlyTableWithoutCard tableName={`get_buses_on_route&0=${row[0]}`}/>
-										</div>
-									</td>
-								</tr>
+							<tr className={rowClass}>
+								{
+									row.map((column, col_index)=>(
+										<td key={(index+1)*col_index}>{column}</td>
+									))
+								}
+							</tr>
+							<tr className={rowClass}>
+								<td colSpan={row.length}>
+									<div className={"w3-bar "}>
+										<Collapsible header={"Водители на маршруте"} className={"w3-bar-item"}>
+											<ReadOnlyTableWithoutCard tableName={`get_drivers_on_route_with_bus_type&0=${row[0]}&1=${this.props.busType}`}/>
+										</Collapsible>
+										<Collapsible header={"Автобусы на маршруте"} className={"w3-bar-item"}>
+											<ReadOnlyTableWithoutCard tableName={`get_buses_on_route_with_type&0=${row[0]}&1=${this.props.busType}`}/>
+										</Collapsible>
+									</div>
+								</td>
+							</tr>
 							</tbody>
 						)
 					})
@@ -160,4 +232,16 @@ class RouteGroupTable extends Component{
 			</table>
 		)
 	}
+}
+
+function TableHeader(props){
+	return (
+		<tr className={"w3-theme-d5"}>
+			{
+				props.header.map((col_name)=>(
+					<th key={col_name}>{col_name}</th>
+				))
+			}
+		</tr>
+	)
 }
